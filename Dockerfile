@@ -33,8 +33,8 @@ RUN cd iroffer-dinoex-3.30 && \
     rm -r /opt/iroffer/iroffer-dinoex-3.30 && \
     useradd iroffer && chown -R iroffer:iroffer /opt/iroffer && chmod 700 /opt/iroffer
 
-RUN echo -e "test1\n" > /opt/iroffer/files/test1.bin && \
-    echo -e "test2\n" > /opt/iroffer/files/test2.bin && \
+RUN echo "test1" > /opt/iroffer/files/test1.bin && \
+    echo "test2" > /opt/iroffer/files/test2.bin && \
     dd if=/dev/zero of=/opt/iroffer/files/test3-1m.bin bs=1M count=1 && \
     dd if=/dev/zero of=/opt/iroffer/files/test4-1g.bin bs=1G count=1
 
