@@ -30,8 +30,7 @@ RUN cd iroffer-dinoex-3.30 && \
     rm -r /opt/iroffer/iroffer-dinoex-3.30 && \
     useradd iroffer && chown -R iroffer:iroffer /opt/iroffer && chmod 700 /opt/iroffer
 
-CMD /opt/iroffer/config/mybot.config && \
-    ./iroffer -b -u iroffer /opt/iroffer/config/mybot.config && \
+CMD ./iroffer -b -u iroffer /opt/iroffer/config/mybot.config && \
     tail -F /opt/iroffer/logs/mybot.log
 
 VOLUME /opt/iroffer/config
