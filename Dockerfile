@@ -23,15 +23,18 @@ RUN cd iroffer-dinoex-3.30 && \
     cp -p iroffer .. && \
     cp *.html .. && \
     cp -r htdocs ../ && \
+    mkdir ../config && \
     mkdir ../files && \
+    mkdir ../logs && \
     cd .. && \
     rm -r /opt/iroffer/iroffer-dinoex-3.30 && \
     useradd iroffer && chown -R iroffer:iroffer /opt/iroffer && chmod 700 /opt/iroffer
 
-CMD /opt/iroffer/mybot.config && \
-    ./iroffer -b -u iroffer /opt/iroffer/mybot.config && \
-    tail -F /opt/iroffer/mybot.log
+CMD /opt/iroffer/config/mybot.config && \
+    ./iroffer -b -u iroffer /opt/iroffer/config/mybot.config && \
+    tail -F /opt/iroffer/logs/mybot.log
 
-VOLUME /opt/iroffer/
+VOLUME /opt/iroffer/config
 VOLUME /opt/iroffer/files
+VOLUME /opt/iroffer/logs
 EXPOSE 50000-50010
