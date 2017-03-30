@@ -1,10 +1,9 @@
-FROM lsiobase/xenial
+FROM ubuntu:xenial
 MAINTAINER Luis E Alvarado <admin@avnet.ws>
 
 # set environment variables
 ENV DEBIAN_FRONTEND="noninteractive" \
-IROFFER_FILES_DIR="/config/files" \
-IROFFER_USER=abc
+IROFFER_FILES_DIR="/config/files"
 
 # install packages
 RUN \
@@ -18,6 +17,7 @@ RUN \
  libssl-dev \
  ruby \
  libruby \
+ curl \
  wget && \
 
 # install iroffer-dinoex
@@ -38,17 +38,17 @@ RUN \
  cp sample.config ../sample.config && \
  cd .. && \
  chmod 600 /sample.config && \
-	
- usermod -d /app abc && \
+ mkdir /config && \
 	
 # cleanup
  apt-get clean && \
- rm -r /iroffer-dinoex-3.30
+ rm -r /iroffer-dinoex-3.30 && \
 
-# add local files
-COPY root/ /
+# prep user
+ useradd iroffer && chown -R iroffer:users /config && chmod 700 .
 
-CMD ./iroffer -b -u abc /config/mybot.config
+CMD ./iroffer -b -u iroffer /config/mybot.config && \
+ tail -F /config/logs/mybot.log
 
 EXPOSE 8000 30000-31000
 VOLUME /config
