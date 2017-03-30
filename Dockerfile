@@ -1,39 +1,54 @@
-FROM debian:8.1
+FROM lsiobase/xenial
 MAINTAINER Luis E Alvarado <admin@avnet.ws>
 
-RUN apt-get update && \
-    apt-get install -y \
-    make \
-    gcc \
-    libc-dev \
-    libcurl4-openssl-dev \
-    libgeoip-dev \
-    libssl-dev \
-    ruby2.1-dev \
-    ruby2.1 && \
-    apt-get clean
+# set environment variables
+ENV DEBIAN_FRONTEND="noninteractive" \
+IROFFER_FILES_DIR="/config/files" \
+IROFFER_USER=abc
 
-WORKDIR /opt/iroffer
-ADD http://iroffer.dinoex.net/iroffer-dinoex-3.30.tar.gz /opt/iroffer-dinoex-3.30.tar.gz
-RUN tar xfz /opt/iroffer-dinoex-3.30.tar.gz -C /opt/iroffer && rm /opt/iroffer-dinoex-3.30.tar.gz
+# install packages
+RUN \
+ apt-get update && \
+ apt-get install -y \
+ make \
+ gcc \
+ libc-dev \
+ libcurl4-openssl-dev \
+ libgeoip-dev \
+ libssl-dev \
+ ruby \
+ libruby \
+ wget && \
 
-RUN cd iroffer-dinoex-3.30 && \
-    ./Configure -curl -geoip -ruby && \
-    make && \
-    cp -p iroffer .. && \
-    cp *.html .. && \
-    cp -r htdocs ../ && \
-    mkdir ../config && \
-    mkdir ../files && \
-    mkdir ../logs && \
-    cd .. && \
-    rm -r /opt/iroffer/iroffer-dinoex-3.30 && \
-    useradd iroffer && chown -R iroffer:iroffer /opt/iroffer && chmod 700 /opt/iroffer
+# install iroffer-dinoex
+ curl -o \
+ /tmp/iroffer-dinoex.tar.gz -L \
+	"http://iroffer.dinoex.net/iroffer-dinoex-3.30.tar.gz" && \
+ tar xf \
+ /tmp/iroffer-dinoex.tar.gz -C \
+	/ && \
 
-CMD ./iroffer -b -u iroffer /opt/iroffer/config/mybot.config && \
-    tail -F /opt/iroffer/logs/mybot.log
+# build iroffer-dinoex
+ cd iroffer-dinoex-3.30 && \
+ ./Configure -curl -geoip -ruby && \
+ make && \
+ cp -p iroffer .. && \
+ cp *.html .. && \
+ cp -r htdocs ../ && \
+ cp sample.config ../sample.config && \
+ cd .. && \
+ chmod 600 /sample.config && \
+	
+ usermod -d /app abc && \
+	
+# cleanup
+ apt-get clean && \
+ rm -r /iroffer-dinoex-3.30
 
-VOLUME /opt/iroffer/config
-VOLUME /opt/iroffer/files
-VOLUME /opt/iroffer/logs
-EXPOSE 50000-50010
+# add local files
+COPY root/ /
+
+CMD ./iroffer -b -u abc /config/mybot.config
+
+EXPOSE 8000 30000-31000
+VOLUME /config
