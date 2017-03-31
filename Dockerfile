@@ -2,8 +2,18 @@ FROM debian:jessie
 
 MAINTAINER Luis E Alvarado <admin@avnet.ws>
 
+ENV IROFFER_USER=iroffer \
+ IROFFER_CONFIG_DIR=/config \
+ IROFFER_CONFIG_FILE=mybot.config \
+ IROFFER_DATA_DIR=/files \
+ IROFFER_LOG_DIR=/logs \
+ IROFFER_LOG_FILE=mybot.log \
+ IROFFER_WWW_DIR=/www \
+ IROFFER_VER=3.30 \
+ DEBIAN_FRONTEND=noninteractive
+
 # add our user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
-RUN groupadd -r iroffer && useradd -r -g iroffer iroffer
+RUN groupadd -r ${IROFFER_USER} && useradd -r -g ${IROFFER_USER} ${IROFFER_USER}
 
 # install packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -21,50 +31,37 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
  wget \
  && rm -rf /var/lib/apt/lists/*
 
-# grab gosu for easy step-down from root
-ENV GOSU_VERSION 1.7
-RUN set -x \
- && wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture)" \
- && wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture).asc" \
- && export GNUPGHOME="$(mktemp -d)" \
- && gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
- && gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
- && rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc \
- && chmod +x /usr/local/bin/gosu \
- && gosu nobody true
-
 # download iroffer-dinoex
 RUN curl -o \
  /tmp/iroffer-dinoex.tar.gz -L \
-	"http://iroffer.dinoex.net/iroffer-dinoex-3.30.tar.gz" && \
+	"http://iroffer.dinoex.net/iroffer-dinoex-${IROFFER_VER}.tar.gz" && \
  tar xf \
  /tmp/iroffer-dinoex.tar.gz -C \
 	/ && \
 
 # build iroffer-dinoex
- cd iroffer-dinoex-3.30 && \
+ cd iroffer-dinoex-${IROFFER_VER} && \
  ./Configure -curl -geoip -ruby && \
  make && \
- mkdir /config && \
- mkdir /www && \
+ mkdir ${IROFFER_CONFIG_DIR} && \
+ mkdir ${IROFFER_WWW_DIR} && \
  cp -p iroffer .. && \
- cp *.html ../www && \
- cp -r htdocs ../www && \
- cp sample.config ../config/sample.config && \
+ cp *.html ..${IROFFER_WWW_DIR} && \
+ cp -r htdocs ..${IROFFER_WWW_DIR} && \
+ cp sample.config ..${IROFFER_CONFIG_DIR}/sample.config && \
  cd .. && \
- chmod 600 /config/sample.config && \
+ chmod 600 ${IROFFER_CONFIG_DIR}/sample.config && \
 	
 # cleanup
  apt-get clean && \
- rm -r /iroffer-dinoex-3.30
+ rm -r /iroffer-dinoex-${IROFFER_VER}
 
-RUN chown -R iroffer:iroffer /config && chmod 700 .
-VOLUME /config
-VOLUME /files
+RUN chown -R ${IROFFER_USER}:${IROFFER_USER} ${IROFFER_CONFIG_DIR} && chmod 700 .
 
-COPY docker-entrypoint.sh /usr/local/bin/
-RUN chmod a+x /usr/local/bin/docker-entrypoint.sh && ln -s usr/local/bin/docker-entrypoint.sh /entrypoint.sh
-ENTRYPOINT ["docker-entrypoint.sh"]
+COPY entrypoint.sh /usr/local/bin/
+RUN chmod a+x /usr/local/bin/entrypoint.sh && ln -s usr/local/bin/entrypoint.sh /entrypoint.sh
 
 EXPOSE 8000 30000-31000
-CMD [ "iroffer" ]
+VOLUME ["${IROFFER_CONFIG_DIR}"]
+VOLUME ["${IROFFER_DATA_DIR}"]
+ENTRYPOINT ["entrypoint.sh"]
