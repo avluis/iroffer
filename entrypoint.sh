@@ -28,7 +28,7 @@ init_log_dir
 
 # default behavior
 if [[ -z ${1} ]]; then
-  exec ./iroffer -b -u ${IROFFER_USER} ${IROFFER_CONFIG_DIR}/${IROFFER_CONFIG_FILE} && \
+  exec ./iroffer -u ${IROFFER_USER} ${IROFFER_CONFIG_DIR}/${IROFFER_CONFIG_FILE} && \
   tail -F ${IROFFER_LOG_DIR}/${IROFFER_LOG_FILE}
 else
   exec "$@"
