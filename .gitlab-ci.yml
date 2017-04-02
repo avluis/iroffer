@@ -1,4 +1,10 @@
 image: docker:latest
+
+# When using dind, it's wise to use the overlayfs driver for
+# improved performance.
+variables:
+  DOCKER_DRIVER: overlay
+
 services:
 - docker:dind
 
@@ -11,7 +17,8 @@ variables:
   CONTAINER_RELEASE_IMAGE: registry.avnet.ws/avluis/docker-iroffer:latest
 
 before_script:
-  - docker login -u gitlab-ic-token -p $CI_JOB_TOKEN registry.avnet.ws
+ - docker info
+ - docker login -u gitlab-ic-token -p $CI_JOB_TOKEN registry.avnet.ws
 
 build:
   stage: build
