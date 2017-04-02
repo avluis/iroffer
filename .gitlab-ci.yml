@@ -21,16 +21,22 @@ before_script:
  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
 
 build:
-  stage: build
   script:
     - docker build --pull -t $CONTAINER_TEST_IMAGE .
     - docker push $CONTAINER_TEST_IMAGE
+  stage: build
+  tags:
+    - dind
+    - ubuntu
 
 release-image:
-  stage: release
   script:
     - docker pull $CONTAINER_TEST_IMAGE
     - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE
     - docker push $CONTAINER_RELEASE_IMAGE
+  stage: release
   only:
     - master
+  tags:
+    - dind
+    - ubuntu
