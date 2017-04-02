@@ -13,12 +13,12 @@ stages:
 - release
 
 variables:
-  CONTAINER_TEST_IMAGE: registry.avnet.ws/avluis/docker-iroffer:$CI_COMMIT_REF_NAME
-  CONTAINER_RELEASE_IMAGE: registry.avnet.ws/avluis/docker-iroffer:latest
+  CONTAINER_TEST_IMAGE: $CI_REGISTRY/avluis/docker-iroffer:$CI_COMMIT_REF_NAME
+  CONTAINER_RELEASE_IMAGE: $CI_REGISTRY/avluis/docker-iroffer:latest
 
 before_script:
  - docker info
- - docker login -u gitlab-ic-token -p $CI_JOB_TOKEN registry.avnet.ws
+ - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
 
 build:
   stage: build
