@@ -1,0 +1,29 @@
+image: docker:latest
+services:
+- docker:dind
+
+stages:
+- build
+- release
+
+variables:
+  CONTAINER_TEST_IMAGE: registry.avnet.ws/avluis/docker-iroffer:$CI_COMMIT_REF_NAME
+  CONTAINER_RELEASE_IMAGE: registry.avnet.ws/avluis/docker-iroffer:latest
+
+before_script:
+  - docker login -u gitlab-ic-token -p $CI_JOB_TOKEN registry.avnet.ws
+
+build:
+  stage: build
+  script:
+    - docker build --pull -t $CONTAINER_TEST_IMAGE .
+    - docker push $CONTAINER_TEST_IMAGE
+
+release-image:
+  stage: release
+  script:
+    - docker pull $CONTAINER_TEST_IMAGE
+    - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE
+    - docker push $CONTAINER_RELEASE_IMAGE
+  only:
+    - master
