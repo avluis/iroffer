@@ -1,0 +1,3 @@
+[submodule "iroffer-dinoex"]
+	path = iroffer-dinoex
+	url = https://github.com/dinoex/iroffer-dinoex.git
