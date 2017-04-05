@@ -28,7 +28,7 @@ init_log_dir
 
 # default behavior
 if [[ -z ${1} ]]; then
-  exec -t ./iroffer -u ${IROFFER_USER} ${IROFFER_CONFIG_DIR}/${IROFFER_CONFIG_FILE}
+  exec nohup ./iroffer -b -u ${IROFFER_USER} ${IROFFER_CONFIG_DIR}/${IROFFER_CONFIG_FILE} &>/dev/null &
 else
   exec "$@"
 fi
