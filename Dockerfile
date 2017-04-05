@@ -12,7 +12,8 @@ ENV IROFFER_USER=iroffer \
  IROFFER_VER=3.30 \
  DEBIAN_FRONTEND=noninteractive
 
-# add our user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
+# add our user and group first to make sure their IDs get assigned consistently,
+# regardless of whatever dependencies get added
 RUN groupadd -r ${IROFFER_USER} && useradd -r -g ${IROFFER_USER} ${IROFFER_USER}
 
 # install packages
