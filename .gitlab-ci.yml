@@ -1,7 +1,6 @@
 image: docker:latest
 
-# When using dind, it's wise to use the overlayfs driver for
-# improved performance.
+# When using dind, use the overlayfs driver.
 variables:
   DOCKER_DRIVER: overlay
 

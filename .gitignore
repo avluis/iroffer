@@ -1,7 +1,4 @@
-
-# IntelliJ project files
-.idea
-out
-gen
-/mybot.state
-/mybot.config
+# Don't check in state files.
+*.state
+# Don't check in config files.
+*.config
