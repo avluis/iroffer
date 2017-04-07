@@ -2,3 +2,5 @@
 *.state
 # Don't check in config files.
 *.config
+# Ignore source archive for now.
+iroffer-dinoex-snap.tar.gz
