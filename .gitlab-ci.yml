@@ -5,37 +5,51 @@ variables:
   DOCKER_DRIVER: overlay
 
 services:
-- docker:dind
+  - docker:dind
 
 stages:
-- build
-- release
+  - build
+  - deploy
 
 variables:
-  CONTAINER_TEST_IMAGE: $CI_REGISTRY/avluis/iroffer:$CI_COMMIT_REF_NAME
-  CONTAINER_RELEASE_IMAGE: registry.avnet.ws/avluis/iroffer:latest
+  REGISTRY_SECURE_IMAGE: $CI_REGISTRY/avluis/iroffer:$CI_COMMIT_REF_NAME
+  REGISTRY_INTERNAL_IMAGE: $INT_REGISTRY/avluis/iroffer:$CI_COMMIT_REF_NAME
+  REGISTRY_PUBLIC_IMAGE: $PUB_REGISTRY/avluis/iroffer:$CI_COMMIT_REF_NAME
 
 before_script:
- - docker info
- - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+  - docker info
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
 
 build:
   script:
-    - docker build --pull -t $CONTAINER_TEST_IMAGE .
-    - docker push $CONTAINER_TEST_IMAGE
+    - echo "Building the app"
+    - docker build --pull -t $REGISTRY_SECURE_IMAGE .
+    - docker push $REGISTRY_SECURE_IMAGE
   stage: build
   tags:
     - dind
     - ubuntu
 
-release-image:
+deploy_staging:
   script:
-    - docker pull $CONTAINER_TEST_IMAGE
-    - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE
-    - docker push $CONTAINER_RELEASE_IMAGE
-  stage: release
+    - echo "Deploy to staging server"
+    - docker pull $REGISTRY_SECURE_IMAGE
+    - docker tag $REGISTRY_SECURE_IMAGE $REGISTRY_INTERNAL_IMAGE
+    - docker push $REGISTRY_INTERNAL_IMAGE
+  stage: deploy
+  environment:
+    name: staging
+    url: https://avnet.ws:5001/repository/avluis/iroffer
   only:
     - master
-  tags:
-    - dind
-    - ubuntu
+
+deploy_prod:
+  stage: deploy
+  script:
+    - echo "Deploy to production server"
+  environment:
+    name: production
+    url: https://hub.docker.com/r/avluis/iroffer
+  when: manual
+  only:
+    - master
