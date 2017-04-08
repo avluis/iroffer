@@ -42,6 +42,9 @@ deploy_staging:
     url: https://avnet.ws:5001/repository/avluis/iroffer
   only:
     - master
+  tags:
+    - dind
+    - ubuntu
 
 deploy_prod:
   stage: deploy
