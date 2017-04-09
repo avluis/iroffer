@@ -1,4 +1,4 @@
-FROM debian:wheezy
+FROM debian:jessie-slim
 
 LABEL name="iroffer" \
 version=$CONT_IMG_VER \
@@ -7,23 +7,29 @@ description="iroffer-dinoex mod XDCC Bot with cUrl, GeoIP, Ruby & UPnP support i
 
 ENV BUILD_ARGS="-curl -geoip -upnp -ruby"
 ARG CONT_IMG_VER
-ENV CONT_IMG_VER ${CONT_IMG_VER:-v0.0.1}
+ENV CONT_IMG_VER ${CONT_IMG_VER:-v1.0}
 ARG DEBIAN_FRONTEND=noninteractive
+
+ENV PREQ_PACKAGES \
+curl
 
 ENV BUILD_PACKAGES \
 ca-certificates \
 gcc \
 libc-dev \
-libssl-dev \
-make \
-ruby1.8-dev \
-ruby1.8
-
-ENV RUNTIME_PACKAGES \
 libcurl4-openssl-dev \
 libgeoip-dev \
 libminiupnpc-dev \
-libruby1.8
+libssl-dev \
+make \
+ruby \
+ruby-dev
+
+ENV RUNTIME_PACKAGES \
+libcurl3 \
+libgeoip1 \
+libminiupnpc10 \
+ruby
 
 # User configurable variables.
 ENV IROFFER_USER=iroffer \
@@ -36,26 +42,30 @@ IROFFER_TAR=iroffer.tar.gz
 ENV IROFFER_URL http://iroffer.dinoex.net/iroffer-dinoex-${IROFFER_VER}.tar.gz
 ENV IROFFER_SHA256 D36FF042AFE5A258A3AFB55452ADF27EB851EE8F5B8A0E488BA0D39DACF8A9A5
 
-# download inital packages
 RUN echo "Preparing" $CONT_IMG_VER "of this container." \
+ && echo "Let's begin! Adding user..." \
 # add user
  && groupadd -r ${IROFFER_USER} && useradd -r -g ${IROFFER_USER} ${IROFFER_USER} \
- && echo "Let's begin! Preparing essential packages..." \
- && apt-get -q update > /dev/null \
- && apt-get -qy install --no-install-recommends curl \
- > /dev/null 2>&1 \
- && curl -sSL "$IROFFER_URL" -o ${IROFFER_TAR} \
- && echo "$IROFFER_SHA256  $IROFFER_TAR" | sha256sum -c - \
- && tar -C /tmp -xzf ${IROFFER_TAR} \
- && rm ${IROFFER_TAR} \
- && echo "Done! Preparing build packages..." \
- && echo "This will take a while..." \
-# install packages
+# install required packages
+ && echo "Installing essential packages..." \
  && apt-get -q update > /dev/null \
  && apt-get -qy install --no-install-recommends \
- $BUILD_PACKAGES \
- $RUNTIME_PACKAGES > /dev/null 2>&1 \
- && echo "Done!" \
+ $PREQ_PACKAGES > /dev/null 2>&1 \
+# download & verify iroffer
+ && echo "Downloading latest iroffer-dinoex..." \
+ && curl -sSL "$IROFFER_URL" -o ${IROFFER_TAR} \
+ && echo "Verifying checksum..." \
+ && echo "$IROFFER_SHA256  $IROFFER_TAR" | sha256sum -c - \
+# extract
+ && echo "Extracting files..." \
+ && tar -C /tmp -xzf ${IROFFER_TAR} \
+ && rm ${IROFFER_TAR} \
+ && echo "Installing build packages..." \
+ && echo "This will take a while..." \
+# install build packages
+ && apt-get -q update > /dev/null \
+ && apt-get -qy install --no-install-recommends \
+ $BUILD_PACKAGES > /dev/null 2>&1 \
 # build iroffer-dinoex
  && cd /tmp/iroffer-dinoex-${IROFFER_VER} \
  && echo "Configuring build..." \
@@ -64,20 +74,23 @@ RUN echo "Preparing" $CONT_IMG_VER "of this container." \
  && echo "Making build..." \
  && make > /dev/null 2>&1 \
  && echo "Build complete!" \
-# cleanup
- && echo "Cleaning up -- not much longer now..." \
- && apt-get remove --purge -qy curl \
+# clean up
+ && echo "Cleaning up..." \
+ && apt-get remove --purge -qy \
+ $PREQ_PACKAGES \
  $BUILD_PACKAGES $(apt-mark showauto) > /dev/null 2>&1 \
+ && apt-get autoremove -qy > /dev/null \
+ && apt-get clean -qy > /dev/null \
+ && cd /tmp/iroffer-dinoex-${IROFFER_VER} \
+# install runtime packages
+ && echo "Installing runtime packages..." \
  && apt-get -q update > /dev/null \
  && apt-get -qy install --no-install-recommends \
  $RUNTIME_PACKAGES > /dev/null 2>&1 \
- && echo "Almost there... Time for the final touches..." \
- && apt-get autoremove -qy > /dev/null \
- && apt-get clean -qy > /dev/null \
  && rm -rf /var/lib/apt/lists/* \
- && cd /tmp/iroffer-dinoex-${IROFFER_VER} \
-# organize
- && echo "Last one, I swear :) -- Manipulating files..." \
+ && ldconfig \
+# organize files & modify mybot.config defaults
+ && echo "Modifying iroffer default install..." \
  && bash -c 'mkdir -p $USER/{config,data,extras/www,logs} \
  && cp -p iroffer / \
  && cp *.html /extras/www \
