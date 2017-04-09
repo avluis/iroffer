@@ -99,12 +99,11 @@ RUN echo "Preparing" $CONT_IMG_VER "of this container." \
  && rm -rf /tmp/* \
  && echo "Done! Thanks for waiting~"'
 
+WORKDIR $USER/
 COPY entrypoint.sh /usr/local/bin/
 RUN ln -s usr/local/bin/entrypoint.sh /entrypoint.sh
-WORKDIR $USER/
 
 VOLUME ["${IROFFER_CONFIG_DIR}", "${IROFFER_DATA_DIR}"]
 EXPOSE 30000-31000
 
 ENTRYPOINT ["entrypoint.sh"]
-# TODO: Add CMD as well
