@@ -21,24 +21,18 @@ init_config() {
   mkdir -p ${IROFFER_CONFIG_DIR}
   chmod -R 0755 ${IROFFER_CONFIG_DIR}
   chown -R ${IROFFER_USER}: ${IROFFER_CONFIG_DIR}
-  echo "Listing:" ${IROFFER_CONFIG_DIR}
-  ls -la ${IROFFER_CONFIG_DIR}
 
   # Data
   mkdir -p ${IROFFER_DATA_DIR}
   touch ${IROFFER_DATA_DIR}/packlist.txt
   chmod -R 0750 ${IROFFER_DATA_DIR}
   chown -R ${IROFFER_USER}: ${IROFFER_DATA_DIR}
-  echo "Listing:" ${IROFFER_DATA_DIR}
-  ls -la ${IROFFER_DATA_DIR}
 
   # Logs
   mkdir -p ${IROFFER_LOG_DIR}
   touch ${IROFFER_LOG_DIR}/mybot.log
   chmod -R 0755 ${IROFFER_LOG_DIR}
   chown -R ${IROFFER_USER}: ${IROFFER_LOG_DIR}
-  echo "Listing:" ${IROFFER_LOG_DIR}
-  ls -la ${IROFFER_LOG_DIR}
 }
 
 # allow the container to be started with `--user`

@@ -55,12 +55,11 @@ RUN echo "Preparing" $CONT_IMG_VER "of this container." \
  && apt-get -qy install --no-install-recommends \
  $BUILD_PACKAGES \
  $RUNTIME_PACKAGES > /dev/null 2>&1 \
- && echo "Done!"
+ && echo "Done!" \
 # build iroffer-dinoex
-WORKDIR /tmp/iroffer-dinoex-${IROFFER_VER}
-RUN echo "Configuring build..." \
+ && cd /tmp/iroffer-dinoex-${IROFFER_VER} \
+ && echo "Configuring build..." \
  && chmod a+x ./Configure \
-# TODO: Check configure options for shared libraries
  && ./Configure ${BUILD_ARGS} > /dev/null 2>&1 \
  && echo "Making build..." \
  && make > /dev/null 2>&1 \
@@ -95,6 +94,7 @@ RUN echo "Configuring build..." \
  && sed -i "/channel #dinoex -noannounce/s/^/#/" config/mybot.config \
  && sed -i "/# 2nd Network/,/^$/d" config/mybot.config \
  && sed -i "/# 3st Network/,/^$/d" config/mybot.config \
+ && sed -i "/#no_status_log/s/#//g" config/mybot.config \
  && chmod 700 . \
  && rm -rf /tmp/* \
  && echo "Done! Thanks for waiting~"'

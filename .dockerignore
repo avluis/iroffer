@@ -1,5 +1,7 @@
 VERSION
-README.md
-CHANGELOG.md
+
+*.md
+.git*
+.vscode/*
 *.tar.gz
-.vscode
+*.config
