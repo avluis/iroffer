@@ -38,6 +38,9 @@ IROFFER_DATA_DIR=/files \
 IROFFER_LOG_DIR=/logs \
 IROFFER_TAR=iroffer.tar.gz
 
+ARG IROFFER_USER_ID=999
+ARG IROFFER_GROUP_ID=999
+
 ARG IROFFER_VER=snap
 ARG IROFFER_SHA256=057B80A705B0EA2A3A2C23850FF7C4215216394CB5AC0F83510F2E2672CE96B9
 
@@ -47,7 +50,7 @@ RUN echo "Preparing" $CONT_IMG_VER "of this container." \
 
 # add user
  && echo "Let's begin! Adding user..." \
- && groupadd -r ${IROFFER_USER} && useradd -r -g ${IROFFER_USER} ${IROFFER_USER} \
+ && groupadd -g ${IROFFER_GROUP_ID} -r ${IROFFER_USER} && useradd -u ${IROFFER_USER_ID} -r -g ${IROFFER_USER} ${IROFFER_USER} \
 
 # install required packages
  && echo "Installing essential packages..." \
