@@ -20,7 +20,6 @@ init_config() {
 
 # Data
   mkdir -p ${IROFFER_DATA_DIR}
-  touch ${IROFFER_DATA_DIR}/packlist.txt
   chmod -R 0750 ${IROFFER_DATA_DIR}
   chown -R ${IROFFER_USER}: ${IROFFER_DATA_DIR}
 
