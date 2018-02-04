@@ -26,7 +26,6 @@ init_config() {
 
 # Logs
   mkdir -p ${IROFFER_LOG_DIR}
-  touch ${IROFFER_LOG_DIR}/mybot.log
   chmod -R 0755 ${IROFFER_LOG_DIR}
   chown -R ${IROFFER_USER}: ${IROFFER_LOG_DIR}
 }
