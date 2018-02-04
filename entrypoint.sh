@@ -31,7 +31,7 @@ if [[ -z ${1} ]]; then
 # default
 # prep
   init_config
-  exec ./iroffer -kns -u ${IROFFER_USER} -w $USER/ ${IROFFER_CONFIG_DIR}/mybot.config
+  exec ./iroffer -kns -u ${IROFFER_USER} -w $USER/ ${IROFFER_CONFIG_DIR}/${IROFFER_CONFIG_FILE_NAME}
 else
 # -?|-h|-v|-c
   exec "$@"

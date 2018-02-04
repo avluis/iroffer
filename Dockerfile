@@ -46,6 +46,8 @@ ARG IROFFER_SHA256=057B80A705B0EA2A3A2C23850FF7C4215216394CB5AC0F83510F2E2672CE9
 
 ENV IROFFER_URL http://iroffer.dinoex.net/iroffer-dinoex-${IROFFER_VER}.tar.gz
 
+ENV IROFFER_CONFIG_FILE_NAME=mybot.config
+
 RUN echo "Preparing" $CONT_IMG_VER "of this container." \
 
 # add user
@@ -96,7 +98,7 @@ RUN echo "Preparing" $CONT_IMG_VER "of this container." \
  && rm -rf /var/lib/apt/lists/* \
  && ldconfig \
 
-# organize files & modify mybot.config defaults
+# organize files & modify config defaults
  && echo "Modifying iroffer default install..." \
  && bash -c 'mkdir -p $USER/{config,data,extras/www,logs}' \
  && cd /tmp/iroffer-dinoex-${IROFFER_VER} \
