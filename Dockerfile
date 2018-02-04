@@ -106,17 +106,17 @@ RUN echo "Preparing" $CONT_IMG_VER "of this container." \
  && cp *.html /extras/www \
  && cp -r htdocs /extras/www \
  && cp sample.config /extras/sample.config \
- && bash -c 'chown -R ${IROFFER_USER}: /{config,data,extras,logs}' \
  && chmod 600 /extras/sample.config \
- && cp -n /extras/sample.config /config/mybot.config \
- && sed -i -e "s|pidfile mybot.pid|pidfile /config/mybot.pid|g" /config/mybot.config \
- && sed -i -e "s|logfile mybot.log|logfile /logs/mybot.log|g" /config/mybot.config \
- && sed -i -e "s|statefile mybot.state|statefile /config/mybot.state|g" /config/mybot.config \
- && sed -i -e "s|xdcclistfile mybot.txt|xdcclistfile /files/packlist.txt|g" /config/mybot.config \
- && sed -i "/channel #dinoex -noannounce/s/^/#/" /config/mybot.config \
- && sed -i "/# 2nd Network/,/^$/d" /config/mybot.config \
- && sed -i "/# 3st Network/,/^$/d" /config/mybot.config \
- && sed -i "/#no_status_log/s/#//g" /config/mybot.config \
+ && cp -n /extras/sample.config /extras/sample.customized.config \
+ && bash -c 'chown -R ${IROFFER_USER}: /{config,data,extras,logs}' \
+ && sed -i -e "s|pidfile mybot.pid|pidfile /config/mybot.pid|g" /extras/sample.customized.config \
+ && sed -i -e "s|logfile mybot.log|logfile /logs/mybot.log|g" /extras/sample.customized.config \
+ && sed -i -e "s|statefile mybot.state|statefile /config/mybot.state|g" /extras/sample.customized.config \
+ && sed -i -e "s|xdcclistfile mybot.txt|xdcclistfile /files/packlist.txt|g" /extras/sample.customized.config \
+ && sed -i "/channel #dinoex -noannounce/s/^/#/" /extras/sample.customized.config \
+ && sed -i "/# 2nd Network/,/^$/d" /extras/sample.customized.config \
+ && sed -i "/# 3st Network/,/^$/d" /extras/sample.customized.config \
+ && sed -i "/#no_status_log/s/#//g" /extras/sample.customized.config \
  && chmod 700 . \
  && rm -rf /tmp/* \
  && echo "Done! Thanks for waiting~"
