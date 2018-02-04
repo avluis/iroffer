@@ -81,7 +81,7 @@ RUN echo "Preparing" $CONT_IMG_VER "of this container." \
 
 # clean up
  && echo "Cleaning up..." \
- && apt-get remove --purge -qy $PREQ_PACKAGES $BUILD_PACKAGES $(apt-mark showauto) > /dev/null 2>&1 \
+ && apt-get remove --purge -qy $PREQ_PACKAGES $BUILD_PACKAGES > /dev/null 2>&1 \
  && apt-get autoremove -qy > /dev/null \
  && apt-get clean -qy > /dev/null \
 
