@@ -1,4 +1,4 @@
-FROM debian:jessie-slim
+FROM debian:9-slim
 
 LABEL name="iroffer" \
 version=$CONT_IMG_VER \
