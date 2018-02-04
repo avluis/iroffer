@@ -117,7 +117,8 @@ RUN echo "Preparing" $CONT_IMG_VER "of this container." \
 
 WORKDIR $USER/
 COPY entrypoint.sh /usr/local/bin/
-RUN ln -s usr/local/bin/entrypoint.sh /entrypoint.sh
+RUN chmod a+x /usr/local/bin/entrypoint.sh \
+ && ln -s usr/local/bin/entrypoint.sh /entrypoint.sh
 
 VOLUME ["${IROFFER_CONFIG_DIR}", "${IROFFER_DATA_DIR}"]
 EXPOSE 30000-31000
