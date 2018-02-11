@@ -8,7 +8,7 @@ if [ "${1:0:1}" = '-' ]; then
 fi
 
 init_config() {
-# Config
+  # Config
   if [ ! -d "${IROFFER_CONFIG_DIR}" ]; then
     mkdir -p ${IROFFER_CONFIG_DIR}
     if [ ! -e "${IROFFER_CONFIG_DIR}/${IROFFER_CONFIG_FILE_NAME}" ]; then
@@ -20,14 +20,14 @@ init_config() {
     chown -R ${IROFFER_USER}: ${IROFFER_CONFIG_DIR}
   fi
 
-# Data
+  # Data
   if [ ! -d "${IROFFER_DATA_DIR}" ]; then
     mkdir -p ${IROFFER_DATA_DIR}
     chmod -R 0750 ${IROFFER_DATA_DIR}
     chown -R ${IROFFER_USER}: ${IROFFER_DATA_DIR}
   fi
 
-# Logs
+  # Logs
   if [ ! -d "${IROFFER_LOG_DIR}" ]; then
     mkdir -p ${IROFFER_LOG_DIR}
     chmod -R 0755 ${IROFFER_LOG_DIR}
